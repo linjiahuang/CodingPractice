@@ -9,6 +9,27 @@ public class Atoi {
 	private static final int BAD_RETURN = 4;
 	private int STATE = START;
 
+    private static boolean checkIfOverflow(int result, int c, int sign)
+    {
+        if (sign == 1)
+        {
+            c = Integer.MAX_VALUE - c;
+            if (result >= Math.ceil(c/10.0))
+                return true;
+            else
+                return false;        
+        }
+        else
+        {
+            c = Integer.MIN_VALUE + c;
+            if (-1*result <= Math.floor(c/10.0))
+                return true;
+            else 
+                return false;
+        }
+
+    }
+
     public int myAtoi(String str) {
 
     	int len = str.length();
@@ -46,7 +67,15 @@ public class Atoi {
 	    			{
 						if (Character.isDigit(c))
     					{
-    						result = result*10 + ((int) c - 48);
+                            if (checkIfOverflow(result, ((int) c - 48), sign))
+                            {
+                                if (sign == 1)
+                                    return Integer.MAX_VALUE;
+                                else
+                                    return Integer.MIN_VALUE;
+                            }
+                            else
+                                result = result*10 + ((int) c - 48);
     					}
     					else
     						STATE = GOOD_RETURN;
@@ -74,7 +103,7 @@ public class Atoi {
     	}
 
     	if (STATE == GOOD_RETURN || STATE == NUM)
-    		return result * sign;
+            return (result * sign);
     	else
     		return 0;
     }
